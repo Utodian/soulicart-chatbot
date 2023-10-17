@@ -53,3 +53,52 @@ export const sendRequest = async <ResponseData>(
         return { error: e as Error }
     }
 }
+
+export const sendRequestP = async <ResponseData>(
+    params:
+        | {
+              method: string
+              url: string
+              body?: Record<string, unknown> | FormData
+          }
+        | string
+): Promise<{ data?: ResponseData; error?: Error }> => {
+    console.log("sendP")
+    try {
+        // const url = typeof params === 'string' ? params : params.url
+        // const response = await fetch(url, {
+        //     method: typeof params === 'string' ? 'GET' : params.method,
+        //     mode: 'cors',
+        //     headers:
+        //         typeof params !== 'string' && isDefined(params.body)
+        //             ? {
+        //                   'Content-Type': 'application/json'
+        //               }
+        //             : undefined,
+        //     body: typeof params !== 'string' && isDefined(params.body) ? JSON.stringify(params.body) : undefined
+        // })
+        let data: any
+        // const contentType = response.headers.get('Content-Type')
+        // if (contentType && contentType.includes('application/json')) {
+        //     data = await response.json()
+        // } else {
+        //     data = await response.text()
+        // }
+        // if (!response.ok) {
+        //     let errorMessage
+
+        //     if (typeof data === 'object' && 'error' in data) {
+        //         errorMessage = data.error
+        //     } else {
+        //         errorMessage = data || response.statusText
+        //     }
+
+        //     throw errorMessage
+        // }
+
+        return { data }
+    } catch (e) {
+        console.error(e)
+        return { error: e as Error }
+    }
+}

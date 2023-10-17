@@ -10,4 +10,12 @@ export declare const sendRequest: <ResponseData>(params: {
     data?: ResponseData | undefined;
     error?: Error | undefined;
 }>;
+export declare const sendRequestP: <ResponseData>(params: {
+    method: string;
+    url: string;
+    body?: Record<string, unknown> | FormData;
+} | string) => Promise<{
+    data?: ResponseData | undefined;
+    error?: Error | undefined;
+}>;
 //# sourceMappingURL=index.d.ts.map

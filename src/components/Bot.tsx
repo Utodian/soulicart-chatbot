@@ -31,7 +31,9 @@ export type BotProps = {
     fontSize?: number
 }
 
-const defaultWelcomeMessage = 'Hi there! How can I help?'
+// const defaultWelcomeMessage = 'Hi there! How can I help?'
+
+const defaultWelcomeMessage = 'Hi there, would you like some recommendations on light decoration products?'
 
 /*const sourceDocuments = [
     {
@@ -127,6 +129,7 @@ export const Bot = (props: BotProps & { class?: string }) => {
     ], { equals: false })
     const [socketIOClientId, setSocketIOClientId] = createSignal('')
     const [isChatFlowAvailableToStream, setIsChatFlowAvailableToStream] = createSignal(false)
+    const [num, setNum] = createSignal(0)
 
     onMount(() => {
         if (!bottomSpacer) return
@@ -173,6 +176,31 @@ export const Bot = (props: BotProps & { class?: string }) => {
         scrollToBottom()
     }
 
+    const texts: { [key: number]: string } = {
+        0: "<div>To better assist you, is this a gift or for yourself?</div>",
+        // 1: `<p>I understand that apartments in NY can be a very small space and you do want some magical decorations to make it special and homey!</p>
+        // <p>If that's your purpose, you've come to the right place. Let me show you a few popular products based on sales and reviews:</p>
+        // <strong>Galaxy Starry Sky Bluetooth Music Speaker LED Night Light:</strong>
+        // <p>This LED light not only illuminates your room with a beautiful starry sky effect but also doubles as a Bluetooth music speaker. Imagine relaxing in your new home, surrounded by a mesmerizing galaxy of stars while listening to your favorite tunes. It's the perfect combination of visual and auditory delight. It's a truly magical and romantic gift that will surely make her new place feel like home.</p>
+        // <strong>Planetarium Galaxy Night Light Projector Series:</strong>
+        // <p>Both projectors are designed to bring the beauty of the galaxy right into your home. With their advanced technology, they can project a mesmerizing galaxy pattern onto your walls or ceiling, creating a truly immersive experience. The projectors come with multiple color options and adjustable brightness settings, allowing you to customize the ambiance to your liking. Whether you want to relax, meditate, or simply enjoy a peaceful night under the stars, these projectors are perfect for creating a serene and dreamy atmosphere.</p>
+        // <p>What do you think? Any other factors you want me to consider?</p>`,
+        1: `<div>I understand that apartments in NY can be a very small space and you do want some magical decorations to make it special and homey!</div>
+        <div>If that's your purpose, you've come to the right place. Let me show you a few popular products based on sales and reviews:</div>
+<strong>Galaxy Starry Sky Bluetooth Music Speaker LED Night Light:</strong>
+        <div>This LED light not only illuminates your room with a beautiful starry sky effect but also doubles as a Bluetooth music speaker. Imagine relaxing in your new home, surrounded by a mesmerizing galaxy of stars while listening to your favorite tunes. It's the perfect combination of visual and auditory delight. It's a truly magical and romantic gift that will surely make her new place feel like home.</div>
+<img src="https://tjhomesmart.com/cdn/shop/products/Galaxy-Starry-Sky-Bluetooth-Projector-Music-Speaker-LED-Night-Light-Projector-Nebula-Ocean-Star-Projector-Moon_jpg_Q90_jpg_2048x2057.webp?v=1664904302">
+<strong>Planetarium Galaxy Night Light Projector Series:</strong>
+        <div>Both projectors are designed to bring the beauty of the galaxy right into your home. With their advanced technology, they can project a mesmerizing galaxy pattern onto your walls or ceiling, creating a truly immersive experience. The projectors come with multiple color options and adjustable brightness settings, allowing you to customize the ambiance to your liking. Whether you want to relax, meditate, or simply enjoy a peaceful night under the stars, these projectors are perfect for creating a serene and dreamy atmosphere.</div>
+<img src="https://tjhomesmart.com/cdn/shop/products/81RSguZEkML._AC_SX679_2048x2048.jpg?v=1664556557">
+        <div>What do you think? Any other factors you want me to consider?</div>`,
+        2: `<div>Ah, I see you're torn. Both are fantastic choices, but let me help you make a decision.
+Ultimately, the choice depends on your personal preferences. If you're looking for a multifunctional piece that combines both visual and auditory elements, the Galaxy Starry Sky Bluetooth Music Speaker LED Night Light is the way to go. However, if you're more interested in a realistic and detailed projection of the night sky, the Planetarium Galaxy Night Light Projector Series is the perfect choice.
+I hope this helps. If you have any more questions or need further assistance, feel free to ask!</dv>`
+    }
+
+    
+
     // Handle form submission
     const handleSubmit = async (value: string) => {
         setUserInput(value)
@@ -204,33 +232,50 @@ export const Bot = (props: BotProps & { class?: string }) => {
             apiHost: props.apiHost,
             body
         })
-
-        if (result.data) {
-
-            const data = handleVectaraMetadata(result.data)
-
-            if (typeof data === 'object' && data.text && data.sourceDocuments) {
-                if (!isChatFlowAvailableToStream()) {
-                    setMessages((prevMessages) => [
-                        ...prevMessages,
-                        { message: data.text, sourceDocuments: data.sourceDocuments, type: 'apiMessage' }
-                    ])
-                }
-            } else {
-                if (!isChatFlowAvailableToStream()) setMessages((prevMessages) => [...prevMessages, { message: data, type: 'apiMessage' }])
-            }
-            setLoading(false)
-            setUserInput('')
-            scrollToBottom()
+        console.log("back", result)
+        const data = {
+            text: texts[num()],
+            // sourceDocuments: "source"
         }
-        if (result.error) {
-            const error = result.error
-            console.error(error)
-            const err: any = error
-            const errorData = typeof err === 'string'? err :err.response.data || `${err.response.status}: ${err.response.statusText}`
-            handleError(errorData)
-            return
-        }
+
+
+        setMessages((prevMessages) => [
+            ...prevMessages,
+            { message: data.text, type: 'apiMessage' }
+        ])
+        console.log("aa")
+        setLoading(false)
+        console.log("after")
+        setUserInput('')
+        scrollToBottom()
+        setNum(num() + 1)
+
+        // if (result.data) {
+
+        //     const data = handleVectaraMetadata(result.data)
+
+        //     if (typeof data === 'object' && data.text && data.sourceDocuments) {
+        //         if (!isChatFlowAvailableToStream()) {
+        //             setMessages((prevMessages) => [
+        //                 ...prevMessages,
+        //                 { message: data.text, sourceDocuments: data.sourceDocuments, type: 'apiMessage' }
+        //             ])
+        //         }
+        //     } else {
+        //         if (!isChatFlowAvailableToStream()) setMessages((prevMessages) => [...prevMessages, { message: data, type: 'apiMessage' }])
+        //     }
+        //     setLoading(false)
+        //     setUserInput('')
+        //     scrollToBottom()
+        // }
+        // if (result.error) {
+        //     const error = result.error
+        //     console.error(error)
+        //     const err: any = error
+        //     const errorData = typeof err === 'string'? err :err.response.data || `${err.response.status}: ${err.response.statusText}`
+        //     handleError(errorData)
+        //     return
+        // }
     }
 
     // Auto scroll chat to bottom

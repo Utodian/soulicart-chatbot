@@ -1,5 +1,5 @@
 import { MessageType } from '@/components/Bot'
-import { sendRequest } from '@/utils/index'
+import { sendRequest,  sendRequestP} from '@/utils/index'
 
 export type IncomingInput = {
     question: string
@@ -15,7 +15,7 @@ export type MessageRequest = {
 }
 
 export const sendMessageQuery = ({ chatflowid, apiHost = 'http://localhost:3000', body }: MessageRequest) =>
-    sendRequest<any>({
+    sendRequestP<any>({
         method: 'POST',
         url: `${apiHost}/api/v1/prediction/${chatflowid}`,
         body
