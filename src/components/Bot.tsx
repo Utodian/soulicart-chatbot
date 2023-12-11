@@ -9,13 +9,15 @@ import { BotMessageTheme, TextInputTheme, UserMessageTheme } from '@/features/bu
 import { Badge } from './Badge'
 import socketIOClient from 'socket.io-client'
 import { Popup } from '@/features/popup'
+import { ImageBubble } from './bubbles/ImageBubble'
 
-type messageType = 'apiMessage' | 'userMessage' | 'usermessagewaiting'
+type messageType = 'apiMessage' | 'userMessage' | 'apiImage' | 'usermessagewaiting'
 
 export type MessageType = {
     message: string
     type: messageType,
     sourceDocuments?: any
+    href?: string[]
 }
 
 export type BotProps = {
@@ -206,8 +208,11 @@ export const Bot = (props: BotProps & { class?: string }) => {
         })
 
         if (result.data) {
-
-            const data = handleVectaraMetadata(result.data)
+            const urlMarkdownRegex = /!\[.*?\]\(https?:\/\/.*?\)/g
+            let data = handleVectaraMetadata(result.data)
+            const urls = extractHttpLinks(urlMarkdownRegex, data)
+            data = data.replace(urlMarkdownRegex, '')
+            // console.log('Data after preprocessing: ' + data)
 
             if (typeof data === 'object' && data.text && data.sourceDocuments) {
                 if (!isChatFlowAvailableToStream()) {
@@ -218,6 +223,13 @@ export const Bot = (props: BotProps & { class?: string }) => {
                 }
             } else {
                 if (!isChatFlowAvailableToStream()) setMessages((prevMessages) => [...prevMessages, { message: data, type: 'apiMessage' }])
+            }
+
+            if (urls.length > 0) {
+                setMessages((prevMessages) => [
+                    ...prevMessages,
+                    { message: '', type: 'apiImage',  href: urls}
+                ])
             }
             setLoading(false)
             setUserInput('')
@@ -308,6 +320,19 @@ export const Bot = (props: BotProps & { class?: string }) => {
         return message
     };
 
+    const extractHttpLinks = (urlMarkdownRegex: RegExp, text: string): string[] => {
+        const urlMarkdowns = text.match(urlMarkdownRegex)
+        const urls: string[] = [];
+        urlMarkdowns?.forEach(url => {
+            const index = url.indexOf(']')
+            if (index !== -1) {
+                // console.log('Pre: ' + url.slice(index+2, -1))
+                urls.push(url.slice(index+2, -1))
+            }
+        });
+        return urls
+    };
+
     const removeDuplicateURL = (message: MessageType) => {
         const visitedURLs: string[] = []
         const newSourceDocuments: any = []
@@ -350,6 +375,9 @@ export const Bot = (props: BotProps & { class?: string }) => {
                                             showAvatar={props.botMessage?.showAvatar}
                                             avatarSrc={props.botMessage?.avatarSrc}
                                         />
+                                    )}
+                                    {message.type === 'apiImage' && (
+                                        <ImageBubble href={message.href} />
                                     )}
                                     {message.type === 'userMessage' && loading() && index() === messages().length - 1 && (
                                         <LoadingBubble />

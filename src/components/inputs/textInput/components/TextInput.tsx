@@ -15,6 +15,7 @@ type Props = {
 
 const defaultBackgroundColor = '#ffffff'
 const defaultTextColor = '#303235'
+const defaultFontSize = 13
 
 export const TextInput = (props: Props) => {
     const [inputValue, setInputValue] = createSignal(props.defaultValue ?? '')
@@ -60,7 +61,7 @@ export const TextInput = (props: Props) => {
                 ref={inputRef as HTMLInputElement}
                 onInput={handleInput}
                 value={inputValue()}
-                fontSize={props.fontSize}
+                fontSize={props.fontSize ?? defaultFontSize}
                 placeholder={props.placeholder ?? 'Type your question'}
             />
             <SendButton sendButtonColor={props.sendButtonColor} type='button' isDisabled={inputValue() === ''} class='my-2 ml-2' on:click={submit}>

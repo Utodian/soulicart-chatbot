@@ -278,6 +278,17 @@
     border-radius: var(--chatbot-border-radius);
   }
 
+  .chatbot-avatar {
+    width: 40px;
+    height: 40px;
+    margin: 10px;
+    background-color: #cccfd3;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
   
 .messagelist {
     width: 100%;

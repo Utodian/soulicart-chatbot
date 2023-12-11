@@ -10,8 +10,9 @@ type Props = {
   textColor?: string
 }
 
-const defaultBackgroundColor = '#3B81F6'
-const defaultTextColor = '#ffffff'
+const defaultBackgroundColor = '#E7F8FF'
+const defaultTextColor = '#303235'
+const defaultAvatarSrc = 'https://upload.wikimedia.org/wikipedia/commons/9/99/Sample_User_Icon.png'
 
 Marked.setOptions({ isNoP: true })
 
@@ -27,17 +28,24 @@ export const GuestBubble = (props: Props) => {
   return (
     <div
       class="flex justify-end mb-2 items-end guest-container"
-      style={{ 'margin-left': '50px' }}
+      style={{ 'flex-direction': 'column' }}
     >
+      <Show when={props.showAvatar}>
+        <div class="chatbot-avatar" >
+          <Avatar initialAvatarSrc={props.avatarSrc ?? defaultAvatarSrc} />
+        </div>
+      </Show>
       <span
         ref={userMessageEl}
-        class="px-4 py-2 mr-2 whitespace-pre-wrap max-w-full chatbot-guest-bubble"
+        class="px-2 py-2 mr-2 whitespace-pre-wrap max-w-full chatbot-guest-bubble"
         data-testid="guest-bubble"
-        style={{ "background-color": props.backgroundColor ?? defaultBackgroundColor, color: props.textColor ?? defaultTextColor, 'border-radius': '6px' }}
+        style={{ 
+          "background-color": props.backgroundColor ?? defaultBackgroundColor,
+          color: props.textColor ?? defaultTextColor,
+          'border-radius': '6px',
+          'font-size': '13px'
+        }}
       />
-      <Show when={props.showAvatar}>
-        <Avatar initialAvatarSrc={props.avatarSrc} />
-      </Show>
     </div>
   )
 }
